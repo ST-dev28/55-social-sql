@@ -46,39 +46,7 @@ app.init = async () => {
     for (let item of rows) {
         console.log(`${++i}. ${firstCapital(item.firstname)}: posts (${item.posts}), comments (${item.comments}), likes (${item.likes});`);
     }
-    /*
-        sql = 'SELECT `users`.`id`, `firstname`, COUNT(`posts`.`id`) as posts\
-             FROM `users`\
-         LEFT JOIN `posts`\
-         ON `posts`.`user_id` = `users`.`id`\
-         GROUP BY `users`.`id`\
-         ORDER BY `register_date` DESC';
-        [rows] = await connection.execute(sql);
-        console.log(rows);
-     
-        sql = 'SELECT `users`.`id`, `firstname`, COUNT(`comments`.`user_id`) as comments\
-             FROM `users`\
-         LEFT JOIN `comments`\
-         ON `comments`.`user_id` = `users`.`id`\
-         GROUP BY `users`.`id`\
-         ORDER BY `register_date` DESC';
-        [rows] = await connection.execute(sql);
-        console.log(rows);
-     
-        sql = 'SELECT `users`.`id`, `firstname`, COUNT(`posts_likes`.`user_id`) as likes\
-             FROM `users`\
-         LEFT JOIN `posts_likes`\
-         ON `posts_likes`.`user_id` = `users`.`id`\
-         GROUP BY `users`.`id`\
-         ORDER BY `register_date` DESC';
-        [rows] = await connection.execute(sql);
-        console.log(rows);
-     
-        /*console.log(`Users: `);
-        i = 0;
-        for (let item of rows) {
-            console.log(`${++i}. ${firstCapital(item.firstname)}, posts (${item.posts}), comments (${item.comments}), likes (${item.likes});`);
-        }*/
+
     console.log('------------------------');
 
     //**2** _Isspausdinti, koki turini turetu matyti Ona (antrasis vartotojas). 
@@ -103,26 +71,30 @@ app.init = async () => {
             WHERE `friends`.`user_id` = 2';
     */
     [rows] = await connection.execute(sql);
-    console.log(rows);
+    //console.log(rows);
     console.log(`Ona's feed: `);
     i = 0;
     for (const { friendname, text, date } of rows) {
-        console.log(`${firstCapital(friendname)} wrote a post "${text}" (${date});`);
+        console.log(`${firstCapital(friendname)} wrote a post "${text}" (${formatDate(date)});`);
     }
     console.log('------------------------');
 
     //** 3 ** _Visu irasu(posts) sarasas su komentarais ir like'ais
+    sql = 'SELECT `posts_likes`.`post_id`, `posts_likes`.`like_option_id`, `posts`.`text`, `like_options`.`text`, `comments`.`text`\
+    FROM `posts_likes`\
+	LEFT JOIN `posts`\
+    ON `posts_likes`.`post_id` = `posts`.`id`\
+    LEFT JOIN `comments`\
+    ON `comments`.`post_id` = `posts`.`id`\
+    LEFT JOIN `like_options`\
+    ON `like_options`.`id` = `posts`.`id`';
+
+    [rows] = await connection.execute(sql);
+    console.log(rows);
 
     console.log('------------------------');
 
     //**4** _Isspausdinti, kas kokius draugus stebi (visi vartotojai)
-    /*sql = 'SELECT `users`.`firstname`, `friends`.`friend_id`,\
-    ( SELECT `users`.`firstname` \
-        FROM `users` \
-        WHERE `users`.`id` = `friends`.`friend_id`) as friendname, \
-         `friends`.`follow_date` as date\
-     FROM `friends`, `users`\
-     ORDER BY `users`.`id`';*/
     sql = 'SELECT `follow_date`,\
     (SELECT `users`.`firstname` \
         FROM `users` \
@@ -132,7 +104,8 @@ app.init = async () => {
         WHERE `users`.`id` = `friends`.`user_id`) as me \
      FROM `friends`';
     [rows] = await connection.execute(sql);
-    console.log(rows);
+    //console.log(rows);
+
     console.log(`User's relationships: `);
     i = 0;
     for (const item of rows) {
