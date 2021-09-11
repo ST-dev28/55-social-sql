@@ -19,6 +19,11 @@ app.init = async () => {
         return str[0].toUpperCase() + str.slice(1);
     }
 
+    function formatDate(date) {
+        const dateF = new Date(date);
+        return dateF.toLocaleString();
+    }
+
     //**1** _Registruotu vartotoju sarasas, isrikiuotas nuo naujausio link 
     //seniausio. Reikia nurodyti varda, post'u kieki, komentaru kieki ir like'u kieki
     sql = 'SELECT `users`.`id`, `firstname`, \
@@ -50,7 +55,7 @@ app.init = async () => {
          ORDER BY `register_date` DESC';
         [rows] = await connection.execute(sql);
         console.log(rows);
-    
+     
         sql = 'SELECT `users`.`id`, `firstname`, COUNT(`comments`.`user_id`) as comments\
              FROM `users`\
          LEFT JOIN `comments`\
@@ -59,7 +64,7 @@ app.init = async () => {
          ORDER BY `register_date` DESC';
         [rows] = await connection.execute(sql);
         console.log(rows);
-    
+     
         sql = 'SELECT `users`.`id`, `firstname`, COUNT(`posts_likes`.`user_id`) as likes\
              FROM `users`\
          LEFT JOIN `posts_likes`\
@@ -68,7 +73,7 @@ app.init = async () => {
          ORDER BY `register_date` DESC';
         [rows] = await connection.execute(sql);
         console.log(rows);
-    
+     
         /*console.log(`Users: `);
         i = 0;
         for (let item of rows) {
@@ -109,6 +114,40 @@ app.init = async () => {
     //** 3 ** _Visu irasu(posts) sarasas su komentarais ir like'ais
 
     console.log('------------------------');
+
+    //**4** _Isspausdinti, kas kokius draugus stebi (visi vartotojai)
+    /*sql = 'SELECT `users`.`firstname`, `friends`.`friend_id`,\
+    ( SELECT `users`.`firstname` \
+        FROM `users` \
+        WHERE `users`.`id` = `friends`.`friend_id`) as friendname, \
+         `friends`.`follow_date` as date\
+     FROM `friends`, `users`\
+     ORDER BY `users`.`id`';*/
+    sql = 'SELECT `follow_date`,\
+    (SELECT `users`.`firstname` \
+        FROM `users` \
+        WHERE `users`.`id` = `friends`.`friend_id`) as friend, \
+        (SELECT `users`.`firstname` \
+        FROM `users` \
+        WHERE `users`.`id` = `friends`.`user_id`) as me \
+     FROM `friends`';
+    [rows] = await connection.execute(sql);
+    console.log(rows);
+    console.log(`User's relationships: `);
+    i = 0;
+    for (const item of rows) {
+        /* const d = new Date(item.follow_date);
+         const dFormat = [d.getMonth() + 1,
+         d.getDate(),
+         d.getFullYear()].join('/') + ' ' +
+             [d.getHours(),
+             d.getMinutes(),
+             d.getSeconds()].join(':');*/
+        //console.log(`${++i}. ${firstCapital(item.me)} is following ${firstCapital(item.friend)} (since ${dFormat});`);
+        console.log(`${++i}. ${firstCapital(item.me)} is following ${firstCapital(item.friend)} (since ${formatDate(item.follow_date)});`);
+    }
+    console.log('------------------------');
+
 }
 app.init();
 
