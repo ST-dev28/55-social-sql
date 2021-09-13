@@ -140,7 +140,29 @@ app.init = async () => {
 
     console.log('------------------------');
 
+    //**6** _Isspausdinti visus komentarus, kuriuose yra nurodytas paieskos 
+    //tekstas. Jei nieko nerasta, tai parodyti atitinkama pranesima. Visa 
+    //tai turi buti funkcijos pavydale, kuri gauna vieninteli parametra - 
+    //paieskos fraze
 
+    async function specword(word) {
+        sql = 'SELECT `comments`.`text`, `comments`.`date`\
+    FROM `comments`\
+    WHERE `text` LIKE "%'+ word + '%"';
+        [rows] = await connection.execute(sql);
+        if (rows.length === 0) {   // tikrinam, ar array tuscias
+            console.error('ERROR: Needed word is not mentioned here!');
+        } else {
+            console.log(`Comments with search term "${word}": `);
+            i = 0;
+            for (let { text, date } of rows) {
+                console.log(`${++i}."${text}" (${formatDate(date)});`);
+            }
+        }
+    }
+    await specword('nice');
+    await specword('lol');  //meta error, nes nera ieskomo zodzio
+    console.log('------------------------');
 }
 app.init();
 
