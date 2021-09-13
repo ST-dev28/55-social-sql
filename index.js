@@ -80,15 +80,17 @@ app.init = async () => {
     console.log('------------------------');
 
     //** 3 ** _Visu irasu(posts) sarasas su komentarais ir like'ais
-    sql = 'SELECT `posts_likes`.`post_id`, `posts_likes`.`like_option_id`, `posts`.`text`, `like_options`.`text`, `comments`.`text`\
-    FROM `posts_likes`\
-	LEFT JOIN `posts`\
-    ON `posts_likes`.`post_id` = `posts`.`id`\
-    LEFT JOIN `comments`\
-    ON `comments`.`post_id` = `posts`.`id`\
-    LEFT JOIN `like_options`\
-    ON `like_options`.`id` = `posts`.`id`';
-
+    sql = 'SELECT `posts`.`id`, `posts`.`text`, `posts`.`date` as postDate,\
+    `comments`.`text` as comment,\
+    `comments`.`date` as commentDate,\
+    `like_options`.`text` as liketext\
+      FROM `posts`\
+      LEFT JOIN `posts_likes`\
+      ON `posts_likes`.`post_id` = `posts`.`id`\
+      LEFT JOIN `comments`\
+      ON `comments`.`post_id` = `posts`.`id`\
+      LEFT JOIN `like_options`\
+      ON `like_options`.`id` = `posts`.`id`';
     [rows] = await connection.execute(sql);
     console.log(rows);
 
@@ -99,7 +101,7 @@ app.init = async () => {
     (SELECT `users`.`firstname` \
         FROM `users` \
         WHERE `users`.`id` = `friends`.`friend_id`) as friend, \
-        (SELECT `users`.`firstname` \
+    (SELECT `users`.`firstname` \
         FROM `users` \
         WHERE `users`.`id` = `friends`.`user_id`) as me \
      FROM `friends`';
