@@ -19,9 +19,16 @@ app.init = async () => {
         return str[0].toUpperCase() + str.slice(1);
     }
 
+    /* function formatDate(date) {
+         const dateF = new Date(date);
+         return dateF.toLocaleString();
+     }*/
+
     function formatDate(date) {
-        const dateF = new Date(date);
-        return dateF.toLocaleString();
+        const d = new Date(date);
+        const dformat = [d.getFullYear(), d.getMonth() + 1, d.getDate()].join('-') + ' ' +
+            [d.getHours(), d.getMinutes(), d.getSeconds()].join(':');
+        return dformat;
     }
 
     //**1** _Registruotu vartotoju sarasas, isrikiuotas nuo naujausio link 
