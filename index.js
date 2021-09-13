@@ -19,18 +19,19 @@ app.init = async () => {
         return str[0].toUpperCase() + str.slice(1);
     }
 
-    /* function formatDate(date) {
-         const dateF = new Date(date);
-         return dateF.toLocaleString();
-     }*/
-
     function formatDate(date) {
-        const d = new Date(date);
-        const dformat = [d.getFullYear(), d.getMonth() + 1, d.getDate()].join('-') + ' ' +
-            [d.getHours(), d.getMinutes(), d.getSeconds()].join(':');
-        return dformat;
+        const dateF = new Date(date);
+        return dateF.toLocaleString();
     }
-
+    /*
+         // kitas datos formatas 
+        function formatDate(date) {
+            const d = new Date(date);
+            const dformat = [d.getFullYear(), d.getMonth() + 1, d.getDate()].join('-') + ' ' +
+                [d.getHours(), d.getMinutes(), d.getSeconds()].join(':');
+            return dformat;
+        }
+    */
     //**1** _Registruotu vartotoju sarasas, isrikiuotas nuo naujausio link 
     //seniausio. Reikia nurodyti varda, post'u kieki, komentaru kieki ir like'u kieki
     sql = 'SELECT `users`.`id`, `firstname`, \
