@@ -121,6 +121,24 @@ app.init = async () => {
     }
     console.log('------------------------');
 
+    // **5** _Koks yra like'u naudojamumas. Isrikiuoti nuo labiausiai naudojamo
+    sql = 'SELECT `like_options`.`text`, COUNT(`posts_likes`.`like_option_id`) as times\
+    FROM `posts_likes`\
+    LEFT JOIN `like_options`\
+    ON `like_options`.`id`= `posts_likes`.`like_option_id`\
+    GROUP BY `posts_likes`.`like_option_id`\
+    ORDER BY times DESC';
+    [rows] = await connection.execute(sql);
+    //console.log(rows);
+    console.log(`Like options statistics: `);
+    i = 0;
+    for (let item of rows) {
+        console.log(`${++i}. ${firstCapital(item.text)} - ${item.times} time;`);
+    }
+
+    console.log('------------------------');
+
+
 }
 app.init();
 
