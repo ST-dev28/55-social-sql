@@ -202,8 +202,8 @@ app.init = async () => {
                 }
             }
         }
-        console.log(uniquePosters.length)
-        console.log(uniquePosters);
+        //console.log(uniquePosters.length)
+        //console.log(uniquePosters);
     }
     await newestpost();
     console.log('------------------------');
