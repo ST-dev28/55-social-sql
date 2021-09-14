@@ -194,8 +194,11 @@ app.init = async () => {
             if (!uniquePosters.includes(item.user)) {
                 uniquePosters.push(item.user);
 
-                if (item.text === null || item.text === '') {
+                if (item.text === null) {
                     console.error(`ERROR: Seems like ${firstCapital(item.firstname)} hasn't posted yet.`)
+                }
+                else if (item.text === '') {
+                    console.error(`ERROR: Seems like ${firstCapital(item.firstname)}'s post is empty.`)
                 }
                 else if (uniquePosters) {
                     console.log(`Latest post from ${firstCapital(item.firstname)}: "${item.text}" (${formatDate(item.date)}).`);
