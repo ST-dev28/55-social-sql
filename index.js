@@ -188,7 +188,7 @@ app.init = async () => {
         ORDER BY `posts`.`date` DESC';
         [rows] = await connection.execute(sql);
         //const uniqueUser = rows.map(obj => obj.user);
-        console.log(rows);
+        //console.log(rows);
         let uniquePosters = [];
         for (const item of rows) {
             if (!uniquePosters.includes(item.user)) {
