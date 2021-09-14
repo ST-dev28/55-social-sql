@@ -100,7 +100,7 @@ app.init = async () => {
       LEFT JOIN `like_options`\
       ON `like_options`.`id` = `posts`.`id`';
     [rows] = await connection.execute(sql);
-    console.log(rows);
+    //console.log(rows);
 
     console.log('------------------------');
 
@@ -171,6 +171,73 @@ app.init = async () => {
     await specword('nice');
     await specword('lol');  //meta error, nes nera ieskomo zodzio
     console.log('------------------------');
+
+    //**7** _Isspausdinti naujausia vartotojo post'a. Visa tai turi buti funkcijos 
+    //pavidale, kuri gauna vieninteli parametra - vartotojo id. Jei vartotojas 
+    //neturi parases nei vieno post'o, grazinti atitinkama pranesima
+
+    // teisingas variantas - pagal vartotoju sarasa
+    async function newestpost() {
+        sql = 'SELECT `users`.`id` as user,\
+            `users`.`firstname`,\
+            `posts`.`user_id` as poster,\
+            `posts`.`date`, `posts`.`text`\
+        FROM `users`\
+        LEFT JOIN `posts`\
+            ON `posts`.`user_id` = `users`.`id`\
+        ORDER BY `posts`.`date` DESC';
+        [rows] = await connection.execute(sql);
+        //const uniqueUser = rows.map(obj => obj.user);
+        console.log(rows);
+        let uniquePosters = [];
+        for (const item of rows) {
+            if (!uniquePosters.includes(item.user)) {
+                uniquePosters.push(item.user);
+
+                if (item.text === null || item.text === '') {
+                    console.error(`ERROR: Seems like ${firstCapital(item.firstname)} hasn't posted yet.`)
+                }
+                else if (uniquePosters) {
+                    console.log(`Latest post from ${firstCapital(item.firstname)}: "${item.text}" (${formatDate(item.date)}).`);
+                }
+            }
+        }
+        console.log(uniquePosters.length)
+        console.log(uniquePosters);
+    }
+    await newestpost();
+    console.log('------------------------');
+
+    // pagal zinuciu sarasa, bet nematomi vartotojai, kurie nieko neparase, nebent zinute tuscias tekstas
+    /*   async function newestpost() {
+           sql = 'SELECT `posts`.`user_id` as user,\
+           `users`.`firstname`, `posts`.`date`, `posts`.`text`\
+               FROM `posts`\
+           LEFT JOIN `users`\
+               ON `posts`.`user_id` = `users`.`id`\
+           GROUP BY `posts`.`date`\
+           ORDER BY `posts`.`date` DESC';
+           [rows] = await connection.execute(sql);
+           //const uniqueUser = rows.map(obj => obj.user);
+           //console.log(rows);
+           let uniquePosters = [];
+           for (const item of rows) {
+               if (!uniquePosters.includes(item.user)) {
+                   uniquePosters.push(item.user);
+   
+                   if (item.text === '') {
+                       console.error(`ERROR: Seems like ${firstCapital(item.firstname)} hasn't posted yet.`)
+                   }
+                   else if (uniquePosters) {
+                       console.log(`Latest post from ${firstCapital(item.firstname)}: "${item.text}" (${formatDate(item.date)}).`);
+                   }
+               }
+               //console.log(uniquePosters.length)
+               //console.log(uniquePosters);
+           }
+       }
+       await newestpost();
+       console.log('------------------------');*/
 }
 app.init();
 
